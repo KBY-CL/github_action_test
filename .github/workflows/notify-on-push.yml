@@ -1,15 +1,47 @@
-name: Push Email Notification
+name: Notify - Push with Diff
 
 on:
   push:
     branches:
-      - '**'   # 모든 브랜치 푸시에 반응
+      - '**'
 
 jobs:
   send-email:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # 이전 커밋과 비교하기 위해 2개 가져옴
+
+      - name: Collect push information
+        id: push-info
+        run: |
+          # 변경된 파일 목록
+          CHANGED_FILES=$(git diff --name-status HEAD~1 HEAD)
+
+          # 추가/수정/삭제 파일 수
+          ADDED=$(git diff --name-status HEAD~1 HEAD | grep '^A' | wc -l)
+          MODIFIED=$(git diff --name-status HEAD~1 HEAD | grep '^M' | wc -l)
+          DELETED=$(git diff --name-status HEAD~1 HEAD | grep '^D' | wc -l)
+
+          # 실제 코드 변경 내용 (최대 100줄로 제한)
+          DIFF_CONTENT=$(git diff HEAD~1 HEAD --stat)
+
+          # 멀티라인을 환경변수로 저장하는 GitHub Actions 방식
+          echo "changed_files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          echo "diff_stat<<EOF" >> $GITHUB_OUTPUT
+          echo "$DIFF_CONTENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          echo "added=$ADDED" >> $GITHUB_OUTPUT
+          echo "modified=$MODIFIED" >> $GITHUB_OUTPUT
+          echo "deleted=$DELETED" >> $GITHUB_OUTPUT
+
       - name: Send email notification
         uses: dawidd6/action-send-mail@v3
         with:
@@ -18,16 +50,39 @@ jobs:
           secure: false
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: |
-            [GitHub Push] ${{ github.repository }} - ${{ github.ref_name }}
+          subject: "[Push] ${{ github.repository }} / ${{ github.ref_name }} - ${{ github.event.head_commit.message }}"
           to: ${{ secrets.EMAIL_TO }}
           from: GitHub Actions <${{ secrets.EMAIL_USERNAME }}>
           body: |
-            📦 새로운 푸시가 감지되었습니다!
+            =======================================
+            📦 Push 알림
+            =======================================
 
-            📁 레포지토리: ${{ github.repository }}
-            🌿 브랜치:     ${{ github.ref_name }}
-            👤 푸시한 사람: ${{ github.actor }}
-            💬 커밋 메시지: ${{ github.event.head_commit.message }}
-            🔗 커밋 URL:   ${{ github.event.head_commit.url }}
-            🕐 시각:       ${{ github.event.head_commit.timestamp }}
+            📁 레포지토리 : ${{ github.repository }}
+            🌿 브랜치     : ${{ github.ref_name }}
+            👤 푸시한 사람 : ${{ github.actor }}
+            🕐 시각       : ${{ github.event.head_commit.timestamp }}
+
+            💬 커밋 메시지
+            ───────────────────────────────────────
+            ${{ github.event.head_commit.message }}
+
+            🔗 커밋 URL
+            ───────────────────────────────────────
+            ${{ github.event.head_commit.url }}
+
+            📊 변경 요약
+            ───────────────────────────────────────
+            ➕ 추가된 파일  : ${{ steps.push-info.outputs.added }}개
+            ✏️  수정된 파일  : ${{ steps.push-info.outputs.modified }}개
+            🗑️  삭제된 파일  : ${{ steps.push-info.outputs.deleted }}개
+
+            📄 변경된 파일 목록
+            ───────────────────────────────────────
+            ${{ steps.push-info.outputs.changed_files }}
+
+            📈 변경 통계 (--stat)
+            ───────────────────────────────────────
+            ${{ steps.push-info.outputs.diff_stat }}
+
+            =======================================
