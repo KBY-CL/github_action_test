@@ -50,7 +50,7 @@ jobs:
           secure: false
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "[Push] ${{ github.repository }} / ${{ github.ref_name }} New Push"
+          subject: "[알림] ${{ github.repository }} / ${{ github.ref_name }} 브랜치 새로운 [PUSH]"
           to: ${{ secrets.EMAIL_TO }}
           from: GitHub Actions <${{ secrets.EMAIL_USERNAME }}>
           body: |
@@ -65,11 +65,11 @@ jobs:
 
             💬 커밋 메시지
             ───────────────────────────────────────
-            ${{ github.event.head_commit.message }}
+            - ${{ github.event.head_commit.message }}
 
             🔗 커밋 URL
             ───────────────────────────────────────
-            ${{ github.event.head_commit.url }}
+            - ${{ github.event.head_commit.url }}
 
             📊 변경 요약
             ───────────────────────────────────────
