@@ -1,0 +1,33 @@
+name: Push Email Notification
+
+on:
+  push:
+    branches:
+      - '**'   # 모든 브랜치 푸시에 반응
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          secure: false
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: |
+            [GitHub Push] ${{ github.repository }} - ${{ github.ref_name }}
+          to: ${{ secrets.EMAIL_TO }}
+          from: GitHub Actions <${{ secrets.EMAIL_USERNAME }}>
+          body: |
+            📦 새로운 푸시가 감지되었습니다!
+
+            📁 레포지토리: ${{ github.repository }}
+            🌿 브랜치:     ${{ github.ref_name }}
+            👤 푸시한 사람: ${{ github.actor }}
+            💬 커밋 메시지: ${{ github.event.head_commit.message }}
+            🔗 커밋 URL:   ${{ github.event.head_commit.url }}
+            🕐 시각:       ${{ github.event.head_commit.timestamp }}
