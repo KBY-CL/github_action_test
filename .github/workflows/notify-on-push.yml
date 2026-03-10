@@ -73,16 +73,11 @@ jobs:
 
             📊 변경 요약
             ───────────────────────────────────────
-            ➕ 추가된 파일  : ${{ steps.push-info.outputs.added }}개
+            ➕  추가된 파일  : ${{ steps.push-info.outputs.added }}개
             ✏️  수정된 파일  : ${{ steps.push-info.outputs.modified }}개
             🗑️  삭제된 파일  : ${{ steps.push-info.outputs.deleted }}개
 
             📄 변경된 파일 목록
             ───────────────────────────────────────
             ${{ steps.push-info.outputs.changed_files }}
-
-            📈 변경 통계 (--stat)
             ───────────────────────────────────────
-            ${{ steps.push-info.outputs.diff_stat }}
-
-            =======================================
