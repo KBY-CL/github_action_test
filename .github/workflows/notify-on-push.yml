@@ -50,10 +50,11 @@ jobs:
           secure: false
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "[알림] ${{ github.repository }} / ${{ github.ref_name }} 브랜치 새로운 [PUSH]"
+          subject: "[클라우드랩] [PUSH] ${{ github.repository }} / ${{ github.ref_name }} Branch"
           to: ${{ secrets.EMAIL_TO }}
           from: GitHub Actions <${{ secrets.EMAIL_USERNAME }}>
           body: |
+
             =======================================
             📦 Push 알림
             =======================================
