@@ -50,7 +50,7 @@ jobs:
           secure: false
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "[Push] ${{ github.repository }} / ${{ github.ref_name }} - ${{ github.event.head_commit.message }}"
+          subject: "[Push] ${{ github.repository }} / ${{ github.ref_name }} New Push"
           to: ${{ secrets.EMAIL_TO }}
           from: GitHub Actions <${{ secrets.EMAIL_USERNAME }}>
           body: |
