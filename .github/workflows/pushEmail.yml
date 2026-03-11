@@ -59,18 +59,11 @@ jobs:
           from: GitHub Actions <dev.cloudlab@gmail.com>
           body: |
 
-            =======================================
-            📦 Push 알림
-            =======================================
-
+            👤 작성자 : ${{ github.actor }}
+            💬 커밋 메시지 : ${{ github.event.head_commit.message }}
             📁 레포지토리 : ${{ github.repository }}
             🌿 브랜치     : ${{ github.ref_name }}
-            👤 푸시한 사람 : ${{ github.actor }}
             🕐 시각       : ${{ github.event.head_commit.timestamp }}
-
-            💬 커밋 메시지
-            ───────────────────────────────────────
-            - ${{ github.event.head_commit.message }}
 
             🔗 커밋 URL
             ───────────────────────────────────────
