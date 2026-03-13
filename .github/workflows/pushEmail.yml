@@ -3,7 +3,7 @@ name: Notify - Push with Diff
 on:
   push:
     branches:
-      - '**'
+      - 'main'
 
 jobs:
   send-email:
@@ -82,3 +82,5 @@ jobs:
             ───────────────────────────────────────
 
             이 메일은 GitHub Actions에서 자동 발송되었습니다.
+
+          convert_markdown: true
